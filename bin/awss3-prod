@@ -1,7 +1,26 @@
 #!/bin/python3
 
 import boto3
+import argparse
+from awss3.factory import BucketFactory, ObjectMetadataFactory
+from awss3.output import HumanReadable, JSON
 
-s3 = boto3.resource('s3')
-for bucket in s3.buckets.all():
-  print(bucket.name)
+parser = argparse.ArgumentParser(description="Amazon S3 bucket fun.")
+parser.add_argument("--output-format", dest="output_format", metavar="OUTPUTFORMAT", choices=["human", "json"], default="human", type=str, help="Change the output format")
+parser.add_argument("--with-metadata", dest="with_metadata", action="store_true", help="Parse the object from the buckets retreived. This is considerably slow.")
+
+args = parser.parse_args()
+if args.output_format == "human":
+  output = HumanReadable()
+elif args.output_format == "json":
+  output = JSON()
+
+s3 = boto3.resource("s3")
+object_metadata_factory = ObjectMetadataFactory()
+bucket_factory = BucketFactory(object_metadata_factory)
+for s3_bucket in s3.buckets.all():
+  if args.with_metadata:
+    bucket = bucket_factory.build_bucket_with_object_metadata(s3_bucket)
+  else:
+    bucket = bucket_factory.build_bucket(s3_bucket)
+  print(output.output_bucket(bucket))
