@@ -2,12 +2,15 @@
 
 import boto3
 import argparse
+import re
 from awss3.factory import BucketFactory, ObjectMetadataFactory
 from awss3.output import HumanReadable, JSON
+from awss3.argparse_action import store_regex
 
 parser = argparse.ArgumentParser(description="Amazon S3 bucket fun.")
 parser.add_argument("--output-format", dest="output_format", metavar="OUTPUTFORMAT", choices=["human", "json"], default="human", type=str, help="Change the output format")
 parser.add_argument("--with-metadata", dest="with_metadata", action="store_true", help="Parse the object from the buckets retreived. This will considerably slowdown the whole process.")
+parser.add_argument("--bucket-name-regex", dest="bucket_name_regex", metavar="REGEX", default=re.compile(".*"), action=store_regex, help="Filter out bucket whose name does not match the given regex")
 
 args = parser.parse_args()
 if args.output_format == "human":
@@ -19,8 +22,9 @@ s3 = boto3.resource("s3")
 object_metadata_factory = ObjectMetadataFactory()
 bucket_factory = BucketFactory(object_metadata_factory)
 for s3_bucket in s3.buckets.all():
-  if args.with_metadata:
-    bucket = bucket_factory.build_bucket_with_object_metadata(s3_bucket)
-  else:
-    bucket = bucket_factory.build_bucket(s3_bucket)
-  print(output.output_bucket(bucket))
+  if args.bucket_name_regex.match(s3_bucket.name):
+    if args.with_metadata:
+      bucket = bucket_factory.build_bucket_with_object_metadata(s3_bucket)
+    else:
+      bucket = bucket_factory.build_bucket(s3_bucket)
+    print(output.output_bucket(bucket))
