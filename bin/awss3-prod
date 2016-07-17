@@ -9,12 +9,13 @@ from awss3.argparse_action import store_regex
 
 parser = argparse.ArgumentParser(description="Amazon S3 bucket fun.")
 parser.add_argument("--output-format", dest="output_format", metavar="OUTPUTFORMAT", choices=["human", "json"], default="human", type=str, help="Change the output format")
+parser.add_argument("--output-filesize-format", dest="output_filesize_format", metavar="FORMAT", choices=["B", "KB", "MB", "GB", "TB"], default="", type=str, help="Change the filesize format for the human readable output")
 parser.add_argument("--with-metadata", dest="with_metadata", action="store_true", help="Parse the object from the buckets retreived. This will considerably slowdown the whole process.")
 parser.add_argument("--bucket-name-regex", dest="bucket_name_regex", metavar="REGEX", default=re.compile(".*"), action=store_regex, help="Filter out bucket whose name does not match the given regex")
 
 args = parser.parse_args()
 if args.output_format == "human":
-  output = HumanReadable()
+  output = HumanReadable(args.output_filesize_format)
 elif args.output_format == "json":
   output = JSON()
 
