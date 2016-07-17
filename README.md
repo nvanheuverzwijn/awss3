@@ -9,3 +9,5 @@ To install dependencies, simply `make` into the project.
 To install the development version, `make dev`.
 
 To clean the install and start over, `make clean`.
+
+To test, `make test`
