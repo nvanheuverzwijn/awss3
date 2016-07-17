@@ -7,7 +7,7 @@ from awss3.output import HumanReadable, JSON
 
 parser = argparse.ArgumentParser(description="Amazon S3 bucket fun.")
 parser.add_argument("--output-format", dest="output_format", metavar="OUTPUTFORMAT", choices=["human", "json"], default="human", type=str, help="Change the output format")
-parser.add_argument("--with-metadata", dest="with_metadata", action="store_true", help="Parse the object from the buckets retreived. This is considerably slow.")
+parser.add_argument("--with-metadata", dest="with_metadata", action="store_true", help="Parse the object from the buckets retreived. This will considerably slowdown the whole process.")
 
 args = parser.parse_args()
 if args.output_format == "human":
