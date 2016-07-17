@@ -27,11 +27,11 @@ class ObjectMetadataFactory(Factory):
     last_modified_date = s3_bucket.creation_date
     cpt = 0
     total_size = 0
-    for obj in s3_bucket.objects.all():
+    for s3_object in s3_bucket.objects.all():
       cpt += 1
-      total_size += obj.size
-      if last_modified_date < obj.last_modified:
-        last_modified_date = obj.last_modified
+      total_size += s3_object.size
+      if last_modified_date < s3_object.last_modified:
+        last_modified_date = s3_object.last_modified
     o = ObjectMetadata()
     o.number_of_object = cpt
     o.last_modified_date = last_modified_date
