@@ -8,6 +8,12 @@ class Output:
     pass
 
 class HumanReadable(Output):
+
+  filesize_unit = ""
+
+  def __init__(self, filesize_unit = ""):
+    self.filesize_unit = ""
+
   def output_bucket(self, b):
     output = "-----Bucket-----\n"
     output += self._bucket_format(b)
@@ -31,12 +37,15 @@ class HumanReadable(Output):
     output = ""
     output += "{}: {}\n".format("last_modified_date", o.last_modified_date)
     output += "{}: {}\n".format("number_of_object", o.number_of_object)
-    output += "{}: {}\n".format("total_size", self._filesize_format(o.total_size))
+    output += "{}: {}\n".format("total_size", self._filesize_format(o.total_size, self.filesize_unit))
     return output
 
-  def _filesize_format(self, num):
+  def _filesize_format(self, num, specific_unit = ""):
     for unit in ['B','KB','MB','GB']:
-        if abs(num) < 1000.0:
+        if specific_unit:
+          if specific_unit == unit:
+            return "%3.2f%s" % (num, unit)
+        elif abs(num) < 1000.0:
             return "%3.2f%s" % (num, unit)
         num /= 1000.0
     return "%.2f%s" % (num, 'TB')
