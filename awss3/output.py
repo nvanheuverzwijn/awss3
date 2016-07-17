@@ -59,8 +59,7 @@ class JSON(Output):
 
   def _json_serial(self, obj):
     if isinstance(obj, datetime.datetime):
-      serial = obj.isoformat()
-      return serial
+      return str(obj)
     if isinstance(obj, object):
       return obj.__dict__
     else:
