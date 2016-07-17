@@ -75,6 +75,16 @@ class HumanReadableTestCase(unittest.TestCase):
     self.assertIn("GB", output_gigabyte)
     self.assertIn("TB", output_anythingelsebyte)
 
+  def test_givenDTOBucketWithObjectMetadata_whenOutputBucket_thenObjectMetadataTotalStorageClassIsInOutput(self):
+    object_metadata = self._givenDTOObjectMetadata()
+    bucket = self._givenDTOBucket(object_metadata)
+
+    output = self.output.output_bucket(bucket)
+
+    self.assertIn(str(bucket.object_metadata.total_storage_classes), output)
+    self.assertIn("total_storage_classes", output)
+    self.assertIn("Standard", output)
+
   def _givenDTOBucket(self, object_metadata = None):
     bucket = Bucket()
     bucket.name = "444-test"
@@ -87,6 +97,7 @@ class HumanReadableTestCase(unittest.TestCase):
     object_metadata.number_of_object = 2
     object_metadata.last_modified_date = datetime.datetime(2016, 1, 1, 0, 0, 0)
     object_metadata.total_size = 2000
+    object_metadata.total_storage_classes = {"Standard": 2}
     return object_metadata
 
 class JSONTestCase(unittest.TestCase):
@@ -112,6 +123,7 @@ class JSONTestCase(unittest.TestCase):
     self.assertEqual(object_metadata.number_of_object, deserialized_object_metadata["number_of_object"])
     self.assertEqual(str(object_metadata.last_modified_date), deserialized_object_metadata["last_modified_date"])
     self.assertEqual(object_metadata.total_size, deserialized_object_metadata["total_size"])
+    self.assertEqual(str(object_metadata.total_storage_classes), str(deserialized_object_metadata["total_storage_classes"]))
 
   def _givenDTOBucket(self, object_metadata = None):
     bucket = Bucket()
@@ -125,4 +137,5 @@ class JSONTestCase(unittest.TestCase):
     object_metadata.number_of_object = 2
     object_metadata.last_modified_date = datetime.datetime(2016, 1, 1, 0, 0, 0)
     object_metadata.total_size = 2000
+    object_metadata.total_storage_classes = {"Standard": 1}
     return object_metadata
