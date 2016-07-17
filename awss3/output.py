@@ -12,7 +12,7 @@ class HumanReadable(Output):
   filesize_unit = ""
 
   def __init__(self, filesize_unit = ""):
-    self.filesize_unit = ""
+    self.filesize_unit = filesize_unit
 
   def output_bucket(self, b):
     output = "-----Bucket-----\n"
