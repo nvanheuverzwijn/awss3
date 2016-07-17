@@ -38,6 +38,7 @@ class HumanReadable(Output):
     output += "{}: {}\n".format("last_modified_date", o.last_modified_date)
     output += "{}: {}\n".format("number_of_object", o.number_of_object)
     output += "{}: {}\n".format("total_size", self._filesize_format(o.total_size, self.filesize_unit))
+    output += "{}: {}\n".format("total_storage_classes", str(o.total_storage_classes))
     return output
 
   def _filesize_format(self, num, specific_unit = ""):

@@ -25,6 +25,7 @@ class BucketFactory(Factory):
 class ObjectMetadataFactory(Factory):
   def build_object_metadata(self, s3_bucket):
     last_modified_date = s3_bucket.creation_date
+    storage_classes = {}
     cpt = 0
     total_size = 0
     for s3_object in s3_bucket.objects.all():
@@ -32,8 +33,10 @@ class ObjectMetadataFactory(Factory):
       total_size += s3_object.size
       if last_modified_date < s3_object.last_modified:
         last_modified_date = s3_object.last_modified
+      storage_classes[s3_object.storage_class] = storage_classes.setdefault(s3_object.storage_class, 0) + 1
     o = ObjectMetadata()
     o.number_of_object = cpt
     o.last_modified_date = last_modified_date
     o.total_size = total_size
+    o.total_storage_classes = storage_classes
     return o

@@ -80,10 +80,36 @@ class ObjectMetadataFactoryTestCase(unittest.TestCase):
 
     self.assertEqual(s3_bucket.creation_date, object_metadata.last_modified_date)
 
-  def _givenS3Object(self, last_modified, size):
+  def test_givenS3BuvketWithTwoObjectHavingSameStorageClass_whenBuildObjectMetadata_thenTotalStorageClassesHaveCorrectKey(self):
+    s3_objects = [
+      self._givenS3Object(storage_class = "Standard"),
+      self._givenS3Object(storage_class = "Standard")
+    ]
+    s3_bucket = self._givenS3Bucket(s3_objects)
+
+    object_metadata = self.object_metadata_factory.build_object_metadata(s3_bucket)
+
+    self.assertEqual(len(s3_objects), object_metadata.total_storage_classes["Standard"])
+    self.assertEqual(1, len(object_metadata.total_storage_classes.keys()))
+
+  def test_givenS3BuvketWithTwoObjectHavingDifferentStorageClass_whenBuildObjectMetadata_thenTotalStorageClassesHaveCorrectKey(self):
+    s3_objects = [
+      self._givenS3Object(storage_class = "Standard1"),
+      self._givenS3Object(storage_class = "Standard2")
+    ]
+    s3_bucket = self._givenS3Bucket(s3_objects)
+
+    object_metadata = self.object_metadata_factory.build_object_metadata(s3_bucket)
+
+    self.assertEqual(1, object_metadata.total_storage_classes["Standard1"])
+    self.assertEqual(1, object_metadata.total_storage_classes["Standard2"])
+    self.assertEqual(2, len(object_metadata.total_storage_classes.keys()))
+
+  def _givenS3Object(self, last_modified = datetime.datetime(2016, 1, 1, 0, 0, 0), size = 1500, storage_class = "Standard"):
     s3_object = Mock()
     s3_object.last_modified = last_modified
     s3_object.size = size
+    s3_object.storage_class = storage_class
     return s3_object
 
   def _givenS3Bucket(self, s3_objects = []):
