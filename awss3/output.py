@@ -12,9 +12,24 @@ class HumanReadable(Output):
   filesize_unit = ""
 
   def __init__(self, filesize_unit = ""):
+  """constructor.
+
+  Args:
+    filesize_unit: A string value representing a filesize. Supported size are `B`, `KB`, `MB`, `GB` and `TB`.
+      An empty value will convert the filesize to a fitting size.
+      Any other values than the mentionned will be defaulted to `TB`. 
+  """
     self.filesize_unit = filesize_unit
 
   def output_bucket(self, b):
+    """Output a dto bucke object.
+    
+    Args:
+      b: A awss3.dto.Bucket object.
+    
+    Returns:
+        A string representing the given awss3.dto.Bucket object.
+    """
     output = "-----Bucket-----\n"
     output += self._bucket_format(b)
     if b.object_metadata:
@@ -23,6 +38,13 @@ class HumanReadable(Output):
     return output
 
   def output_object_metadata(self, o, prefix = ""):
+    """
+    Args:
+      o: A awss3.dto.ObjectMetadata object.
+
+    Returns:
+      A string representing the given awss3.dto.ObjectMetadata object.
+    """
     output = "-----ObjectMetadata-----\n"
     output += self._object_metadata_format(o)
     return output
@@ -53,9 +75,26 @@ class HumanReadable(Output):
 
 class JSON(Output):
   def output_bucket(self, b):
+  """Output a dto bucket object.
+  
+  Args:
+    b: A awss3.dto.Bucket object.
+  
+  Returns:
+      A json string representing the given awss3.dto.Bucket object.
+  """
+
     return json.dumps(b.__dict__, default=self._json_serial)
 
   def output_object_metadata(self, o):
+  """Output a dto object metadata object.
+  
+  Args:
+    b: A awss3.dto.ObjectMetadata object.
+  
+  Returns:
+      A json string representing the given awss3.dto.ObjectMetadata object.
+  """
     return json.dumps(o.__dict__, default=self._json_serial)
 
   def _json_serial(self, obj):

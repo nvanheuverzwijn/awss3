@@ -8,22 +8,51 @@ class BucketFactory(Factory):
   object_metadata_factory = None
   
   def __init__(self, object_metadata_factory):
+    """constructor
+
+    Args:
+      object_metadata_factory: An awss3.factory.ObjectMetadataFactory
+    """
     self.object_metadata_factory = object_metadata_factory
     pass
 
   def build_bucket(self, s3_bucket):
+    """build a bucket dto object from a boto3 s3_bucket object
+    Args:
+      s3_bucket: A boto3 s3 bucket object
+    Returns:
+      awss3.dto.Bucket
+    """
     b = Bucket()
     b.name = s3_bucket.name
     b.date_created = s3_bucket.creation_date
     return b
 
   def build_bucket_with_object_metadata(self, s3_bucket):
+    """build a bucket dto object from a boto3 s3_bucket object
+    This will also parse every objects of the given s3_bucket.
+
+    Args:
+      s3_bucket: A boto3 s3 bucket object
+
+    Returns:
+      awss3.dto.Bucket
+    """
     b = self.build_bucket(s3_bucket)
     b.object_metadata = self.object_metadata_factory.build_object_metadata(s3_bucket)
     return b
 
 class ObjectMetadataFactory(Factory):
+
   def build_object_metadata(self, s3_bucket):
+  """Parse all objects from the given s3_bucket and build an object metadata dto.
+
+  Args:
+    s3_bucket: A boto3 s3 bucket object
+
+  Returns:
+    awss3.dto.ObjectMetadata
+  """
     last_modified_date = s3_bucket.creation_date
     storage_classes = {}
     cpt = 0
