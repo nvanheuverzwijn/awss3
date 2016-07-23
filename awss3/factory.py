@@ -45,14 +45,14 @@ class BucketFactory(Factory):
 class ObjectMetadataFactory(Factory):
 
   def build_object_metadata(self, s3_bucket):
-  """Parse all objects from the given s3_bucket and build an object metadata dto.
+    """Parse all objects from the given s3_bucket and build an object metadata dto.
 
-  Args:
-    s3_bucket: A boto3 s3 bucket object
+    Args:
+      s3_bucket: A boto3 s3 bucket object
 
-  Returns:
-    awss3.dto.ObjectMetadata
-  """
+    Returns:
+      awss3.dto.ObjectMetadata
+    """
     last_modified_date = s3_bucket.creation_date
     storage_classes = {}
     cpt = 0
